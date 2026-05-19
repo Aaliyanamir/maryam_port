@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Maryam KHAN | AI Singularity — Next-Gen 3D Portfolio</title>
+  <!-- Google Fonts: Cyberpunk & Futuristic -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- Three.js Core & Addons -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+      }
+    }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Space Grotesk', 'Inter', sans-serif;
+      background-color: #05050A;
+      overflow-x: hidden;
+      color: #EFF6FF;
+    }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #0A0A14; }
+    ::-webkit-scrollbar-thumb { background: #00E5FF; border-radius: 10px; }
+    
+    /* Ultra-premium glass morphism with neon glow */
+    .glass-neural {
+      background: rgba(6, 12, 28, 0.7);
+      backdrop-filter: blur(16px);
+      border-radius: 2rem;
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.6), 0 0 20px rgba(0,229,255,0.1);
+    }
+    .glass-card-pro {
+      background: rgba(10, 18, 34, 0.75);
+      backdrop-filter: blur(12px);
+      border-radius: 1.8rem;
+      border: 1px solid rgba(0, 200, 255, 0.2);
+      transition: all 0.4s cubic-bezier(0.2,0.9,0.4,1.2);
+    }
+    .glass-card-pro:hover {
+      border-color: #00E5FF;
+      box-shadow: 0 0 28px rgba(0,229,255,0.25);
+      transform: translateY(-6px);
+    }
+    .neon-glow-text {
+      text-shadow: 0 0 12px #00E5FF, 0 0 25px #0066FF;
+    }
+    .btn-ai-cyber {
+      background: linear-gradient(95deg, #0066FF, #00CCFF);
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px #00CCFF80;
+    }
+    .btn-ai-cyber:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 30px #00E5FF;
+    }
+    canvas#ai-3d-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      display: block;
+    }
+    section { position: relative; z-index: 5; }
+    
+    /* Advanced scroll reveal animations */
+    .fade-up-3d {
+      opacity: 0;
+      transform: translateY(70px) scale(0.96);
+      transition: opacity 1s cubic-bezier(0.2, 0.9, 0.3, 1.2), transform 1s ease;
+    }
+    .fade-up-3d.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .skill-badge-ai {
+      background: linear-gradient(135deg, rgba(0,100,255,0.12), rgba(0,0,0,0.5));
+      border-left: 4px solid #00E5FF;
+      padding: 0.6rem 1.3rem;
+      border-radius: 0 2rem 2rem 0;
+      font-weight: 500;
+    }
+    .project-holo {
+      transition: all 0.45s;
+    }
+    .project-holo:hover {
+      transform: translateY(-12px) scale(1.02);
+      box-shadow: 0 30px 45px -15px rgba(0,229,255,0.3);
+    }
+    .hero-image-container {
+      box-shadow: 0 0 0 3px rgba(0,229,255,0.4), 0 25px 45px -12px #000;
+      transition: all 0.4s;
+    }
+    .hero-image-container:hover {
+      box-shadow: 0 0 0 6px rgba(0,229,255,0.7), 0 30px 50px -12px #000;
+      transform: scale(1.02);
+    }
+    /* Circular animated avatar styles */
+    .avatar-shell { width:100%; height:100%; display:flex; align-items:center; justify-content:center; position:relative;  }
+    .avatar-wrap { width:86%; height:86%; border-radius:50%; position:relative; display:flex; align-items:center; justify-content:center; background: radial-gradient(circle at 30% 20%, rgba(8,16,30,0.6), rgba(2,6,10,0.9)); overflow:visible; z-index:2; transform-style:preserve-3d; animation: float 6s ease-in-out infinite; transition: transform .28s ease; box-shadow: 0 18px 36px rgba(0,0,0,0.55); }
+    .avatar { width:100%; height:100%; border-radius:50%; overflow:hidden; position:relative; z-index:3; }
+    .avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+    .avatar-ring { position:absolute; inset:-12px; border-radius:50%; z-index:1; pointer-events:none; background: conic-gradient(from 0deg, rgba(0,229,255,0.12), rgba(0,120,255,0.08), rgba(255,68,170,0.06), rgba(0,229,255,0.12)); filter: blur(8px); animation: spin 8s linear infinite; }
+    .avatar-ring-front { position:absolute; inset:-4px; border-radius:50%; z-index:4; box-shadow: 0 0 36px rgba(0,229,255,0.12); border: 2px solid rgba(0,229,255,0.18); pointer-events:none; }
+    .avatar-badge { position:absolute; bottom:8px; left:50%; transform:translateX(-50%); z-index:5; background: rgba(3,7,12,0.55); padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,0.04); font-size:11px; color:#9be9ff; font-family: monospace; }
+    .avatar-wrap:hover { transform: scale(1.04); }
+
+    @keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
+    @keyframes float { 0%{ transform: translateY(0);}50%{transform: translateY(-8px);}100%{transform: translateY(0);} }
+    /* Positioning for avatar container to avoid overlap with 3D canvas */
+    .hero-avatar-container { position: relative; margin-left: -2.25rem; z-index: 30; display:flex; align-items:center; justify-content:center; }
+    @media (min-width: 1024px) { .hero-avatar-container { margin-left: -4.5rem; } }
+  </style>
+</head>
+<body class="bg-[#02020A]">
+
+  <canvas id="ai-3d-canvas"></canvas>
+
+  <!-- Navigation - Holographic Floating -->
+  <nav class="fixed top-0 w-full z-50 px-6 py-4 flex justify-between items-center max-w-7xl mx-auto left-0 right-0 mt-4 glass-neural rounded-full backdrop-blur-md border border-white/10">
+    <div class="text-2xl font-extrabold tracking-wider bg-gradient-to-r from-cyan-300 to-blue-500 bg-clip-text text-transparent">MARYAM KHAN</div>
+    <div class="hidden md:flex space-x-8 text-sm font-medium">
+      <a href="#home" class="text-gray-200 hover:text-cyan-400 transition duration-300 relative group">Home<span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span></a>
+      <a href="#about" class="text-gray-200 hover:text-cyan-400 transition">About</a>
+      <a href="#skills" class="text-gray-200 hover:text-cyan-400 transition">Skills</a>
+      <a href="#experience" class="text-gray-200 hover:text-cyan-400 transition">Experience</a>
+      <a href="#projects" class="text-gray-200 hover:text-cyan-400 transition">Projects</a>
+      <a href="#contact" class="text-gray-200 hover:text-cyan-400 transition">Contact</a>
+      <a href="#resume" class="text-gray-200 hover:text-cyan-400 transition">Resume</a>
+    </div>
+  </nav>
+
+  <!-- HERO Section with Profile Image Slot -->
+  <section id="home" class="min-h-screen flex items-center justify-center px-6 relative pt-24">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-col lg:flex-row items-center justify-between gap-12">
+        <div class="flex-1 text-left fade-up-3d">
+          <div class="inline-block mb-5 px-5 py-1.5 rounded-full glass-neural text-cyan-300 text-sm font-mono tracking-wide border border-cyan-500/40">✦ AI QUANTUM ENGINEER ✦</div>
+          <h1 class="text-6xl md:text-7xl font-black leading-tight tracking-tighter"><span class="bg-gradient-to-r from-white via-cyan-300 to-blue-400 bg-clip-text text-transparent neon-glow-text">Maryam KHAN</span></h1>
+          <p class="text-gray-300 text-xl mt-5 leading-relaxed max-w-xl">Building sentient web ecosystems • 3D AI Integration • Full-Stack (.NET & JS) • Graphic Design</p>
+          <div class="flex flex-wrap gap-5 mt-8">
+            <a href="#projects" class="px-8 py-3.5 btn-ai-cyber rounded-full font-semibold text-white shadow-xl transition">Explore AI Universe →</a>
+            <a href="#contact" class="px-8 py-3.5 glass-neural rounded-full font-semibold border border-white/20 hover:bg-white/10 transition">Neural Contact</a>
+          </div>
+          <div class="flex gap-8 mt-12 text-gray-400 text-sm">
+            <div class="flex items-center gap-2"><div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div> 500K+ Global Impact</div>
+            <div class="flex items-center gap-2">🧠 4+ Years Exp</div>
+            <div class="flex items-center gap-2">🌌 AI-Driven</div>
+          </div>
+        </div>
+        <!-- Profile Image with holographic effect (ready for your pic) -->
+        <div class="flex-1 flex justify-center fade-up-3d">
+            <div class="w-72 h-72 md:w-84 md:h-84 hero-avatar-container">
+              <div class="avatar-shell">
+                <div class="avatar-ring" aria-hidden="true"></div>
+                <div class="avatar-wrap" id="heroAvatar">
+                  <div class="avatar">
+                    <img src="assets/images/pic2.png" alt="Maryam KHAN">
+                  </div>
+                  <div class="avatar-ring-front" aria-hidden="true"></div>
+                </div>
+                <div class="avatar-badge">MARYAM KHAN</div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section - AI context -->
+  <section id="about" class="py-28 px-6 max-w-7xl mx-auto">
+    <div class="grid md:grid-cols-2 gap-14 items-center">
+      <div class="fade-up-3d">
+        <div class="inline-flex px-4 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/40 text-cyan-400 text-sm">⚡ COGNITIVE ARCHITECT ⚡</div>
+        <h2 class="text-4xl md:text-5xl font-bold mt-4">AI-Powered <span class="text-cyan-400">Full Stack</span> Visionary</h2>
+        <p class="text-gray-300 text-lg leading-relaxed mt-5">Highly motivated Full Stack Developer merging artificial intelligence with high-end web engineering. Expertise in React, Next.js, Laravel, Python, TensorFlow, and immersive 3D experiences. I craft intelligent, scalable digital ecosystems that redefine human-computer interaction.</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <span class="bg-white/5 px-5 py-2 rounded-full text-sm border border-white/10">AI Integration</span>
+          <span class="bg-white/5 px-5 py-2 rounded-full text-sm border border-white/10">Neural Interfaces</span>
+          <span class="bg-white/5 px-5 py-2 rounded-full text-sm border border-white/10">System Architecture</span>
+        </div>
+      </div>
+      <div class="glass-card-pro p-6 fade-up-3d">
+        <h3 class="text-2xl font-bold text-cyan-300">› Digital DNA</h3>
+        <ul class="mt-5 space-y-3 text-gray-200">
+          <li class="flex gap-3"><span class="text-cyan-400">▹</span> Higher Diploma in Software Engineering (Aptech)</li>
+          <li class="flex gap-3"><span class="text-cyan-400">▹</span> Matric & Intermediate - Govt. / Khadija Kazi College</li>
+          <li class="flex gap-3"><span class="text-cyan-400">▹</span> Cross-functional leadership: Ops, HR, Support</li>
+          <li class="flex gap-3"><span class="text-cyan-400">▹</span> 15+ high-scale AI & 3D projects delivered</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section Ultra Modern -->
+  <section id="skills" class="py-28 px-6 bg-black/40 backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center fade-up-3d mb-14">
+        <h2 class="text-4xl md:text-5xl font-bold"><span class="text-cyan-400">Cognitive</span> Arsenal</h2>
+        <p class="text-gray-400 mt-2">AI-Enhanced Full Spectrum Tech Stack</p>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="glass-card-pro p-5 text-center fade-up-3d"><div class="text-5xl mb-3 text-cyan-400">⚛️</div><h3 class="font-bold text-xl">React/Next.js</h3><p class="text-gray-400 text-sm">SSR, AI Components</p></div>
+        <div class="glass-card-pro p-5 text-center fade-up-3d"><div class="text-5xl mb-3 text-indigo-400">🐘</div><h3 class="font-bold text-xl">Laravel/PHP</h3><p class="text-gray-400 text-sm">RESTful AI APIs</p></div>
+        <div class="glass-card-pro p-5 text-center fade-up-3d"><div class="text-5xl mb-3 text-emerald-400">🗄️</div><h3 class="font-bold text-xl">MySQL/PgSQL</h3><p class="text-gray-400 text-sm">Vector Data</p></div>
+        <div class="glass-card-pro p-5 text-center fade-up-3d"><div class="text-5xl mb-3 text-purple-400">🐍</div><h3 class="font-bold text-xl">Python AI</h3><p class="text-gray-400 text-sm">TensorFlow, FastAPI</p></div>
+        <div class="glass-card-pro p-5 text-center fade-up-3d"><div class="text-5xl mb-3 text-pink-400">🌌</div><h3 class="font-bold text-xl">Three.js/WebGL</h3><p class="text-gray-400 text-sm">3D AI Visuals</p></div>
+        <div class="glass-card-pro p-5 text-center fade-up-3d"><div class="text-5xl mb-3 text-sky-400">🎨</div><h3 class="font-bold text-xl">Tailwind/CSS</h3><p class="text-gray-400 text-sm">Neural UI</p></div>
+        <div class="glass-card-pro p-5 text-center fade-up-3d"><div class="text-5xl mb-3 text-yellow-400">🔍</div><h3 class="font-bold text-xl">SEO/Performance</h3><p class="text-gray-400 text-sm">Core Web Vitals</p></div>
+        <div class="glass-card-pro p-5 text-center fade-up-3d"><div class="text-5xl mb-3 text-rose-400">📊</div><h3 class="font-bold text-xl">Data Analytics</h3><p class="text-gray-400 text-sm">MS Office + BI</p></div>
+        <div class="glass-card-pro p-5 text-center fade-up-3d"><div class="text-5xl mb-3 text-teal-400">🧩</div><h3 class="font-bold text-xl">C# / ASP.NET</h3><p class="text-gray-400 text-sm">Backend, Web APIs, MVC</p></div>
+        <div class="glass-card-pro p-5 text-center fade-up-3d"><div class="text-5xl mb-3 text-pink-500">🎨</div><h3 class="font-bold text-xl">Graphic Design</h3><p class="text-gray-400 text-sm">Figma, Photoshop, Brand Identity</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience Timeline - Futuristic -->
+  <section id="experience" class="py-28 px-6 max-w-7xl mx-auto">
+    <div class="text-center fade-up-3d mb-16">
+      <h2 class="text-4xl md:text-5xl font-bold">Neural <span class="text-cyan-400">Pathways</span></h2>
+      <div class="w-24 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 mx-auto mt-4 rounded-full"></div>
+    </div>
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="glass-card-pro p-7 fade-up-3d border-l-4 border-cyan-500"><h3 class="text-2xl font-bold">Assistant Manager - Skin Care Co.</h3><p class="text-cyan-400 text-sm">1 Year | Strategic Ops</p><ul class="list-disc list-inside text-gray-300 mt-3 space-y-1 text-sm"><li>Supervised daily ops, 27% efficiency boost</li><li>Resolved escalations & trained 15+ staff</li><li>Led business intelligence reports</li></ul></div>
+      <div class="glass-card-pro p-7 fade-up-3d border-l-4 border-purple-500"><h3 class="text-2xl font-bold">Call Center Rep - Consol BPO</h3><p class="text-purple-400 text-sm">6 Months | Client AI insights</p><ul class="list-disc list-inside text-gray-300 mt-3 space-y-1 text-sm"><li>80+ daily calls, 95% satisfaction</li><li>CRM optimization & KPI tracking</li></ul></div>
+      <div class="glass-card-pro p-7 fade-up-3d border-l-4 border-green-500"><h3 class="text-2xl font-bold">Documentation Assistant - Pharma</h3><p class="text-green-400 text-sm">1 Year | Data Digitization</p><ul class="list-disc list-inside text-gray-300 mt-3 space-y-1 text-sm"><li>Digitized records & automated summaries</li><li>Improved document retrieval by 40%</li></ul></div>
+      <div class="glass-card-pro p-7 fade-up-3d border-l-4 border-amber-500"><h3 class="text-2xl font-bold">HR Assistant - AMTC</h3><p class="text-amber-400 text-sm">1 Year | Talent Intelligence</p><ul class="list-disc list-inside text-gray-300 mt-3 space-y-1 text-sm"><li>CV screening & interview scheduling</li><li>HRIS management</li></ul></div>
+    </div>
+  </section>
+
+  <!-- Projects Section with AI & 3D Masterpieces -->
+  <section id="projects" class="py-28 px-6 bg-black/50">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center fade-up-3d mb-14">
+        <h2 class="text-4xl md:text-5xl font-bold">AI <span class="text-cyan-400">Genesis</span> Projects</h2>
+        <p class="text-gray-400">Where code meets intelligence & 3D reality</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="glass-card-pro p-6 project-holo fade-up-3d"><div class="h-44 rounded-xl bg-gradient-to-br from-blue-900/40 to-cyan-900/40 flex items-center justify-center text-6xl">🧠</div><h3 class="text-xl font-bold mt-4">Neural AI Commerce</h3><p class="text-gray-300 text-sm">Next.js + Laravel + OpenAI rec engine, realtime personalization.</p><div class="flex gap-2 mt-3"><span class="text-xs bg-cyan-900/60 px-2 py-1 rounded-full">AI</span><span class="text-xs bg-blue-900/60 px-2 py-1 rounded-full">Laravel</span></div></div>
+        <div class="glass-card-pro p-6 project-holo fade-up-3d"><div class="h-44 rounded-xl bg-gradient-to-br from-indigo-900/40 to-fuchsia-900/40 flex items-center justify-center text-6xl">🌀</div><h3 class="text-xl font-bold mt-4">3D AI Metaverse</h3><p class="text-gray-300 text-sm">Three.js + GPT-4 powered NPCs, immersive WebGL world.</p><div class="flex gap-2 mt-3"><span class="text-xs bg-cyan-900/60 px-2 py-1 rounded-full">Three.js</span><span class="text-xs bg-purple-900/60 px-2 py-1 rounded-full">AI</span></div></div>
+        <div class="glass-card-pro p-6 project-holo fade-up-3d"><div class="h-44 rounded-xl bg-gradient-to-br from-rose-900/40 to-orange-900/40 flex items-center justify-center text-6xl">📈</div><h3 class="text-xl font-bold mt-4">HR Intelligence Suite</h3><p class="text-gray-300 text-sm">Predictive analytics dashboard, ML attrition model, role-based AI insights.</p><div class="flex gap-2 mt-3"><span class="text-xs bg-rose-900/60 px-2 py-1 rounded-full">Python</span><span class="text-xs bg-yellow-900/60 px-2 py-1 rounded-full">TensorFlow</span></div></div>
+        <div class="glass-card-pro p-6 project-holo fade-up-3d"><div class="h-44 rounded-xl bg-gradient-to-br from-teal-900/40 to-cyan-900/40 flex items-center justify-center text-6xl">🤖</div><h3 class="text-xl font-bold mt-4">AI SkinCare CRM</h3><p class="text-gray-300 text-sm">Customer support bot + realtime sentiment analysis & ticketing.</p></div>
+        <div class="glass-card-pro p-6 project-holo fade-up-3d"><div class="h-44 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center text-6xl">✨</div><h3 class="text-xl font-bold mt-4">Neural Document Assistant</h3><p class="text-gray-300 text-sm">OCR + LLM document parsing, automated data extraction.</p></div>
+        <div class="glass-card-pro p-6 project-holo fade-up-3d"><div class="h-44 rounded-xl bg-gradient-to-br from-emerald-900/40 to-green-900/40 flex items-center justify-center text-6xl">🌐</div><h3 class="text-xl font-bold mt-4">Web3 AI Agent</h3><p class="text-gray-300 text-sm">Blockchain-integrated AI agent for smart contract interactions.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resume Download Section -->
+  <section id="resume" class="py-28 px-6 max-w-5xl mx-auto">
+    <div class="glass-neural p-8 md:p-10 fade-up-3d">
+      <h2 class="text-3xl md:text-4xl font-bold">⚡ Cognitive Resume</h2>
+      <p class="text-gray-300 mt-2 mb-6">Full profile & achievements — instant download</p>
+      <div class="bg-black/50 rounded-2xl p-6 text-gray-200 text-sm space-y-2 max-h-64 overflow-y-auto border border-cyan-500/20">
+        <p class="font-bold text-cyan-300">Maryam KHAN — Full Stack AI Architect</p>
+        <p>📞 +92 315 2665743 | ✉ maryamkh4240@gmail.com | 📍 Surjani Town, Karachi</p>
+        <hr class="border-white/20">
+        <p><span class="font-semibold">Education:</span> Higher Diploma in Software Engineering (Aptech) | Matric & Intermediate</p>
+        <p><span class="font-semibold">Experience:</span> Assistant Manager (Skin Care), Call Center, Documentation Asst, HR Asst — 4+ years cross-domain</p>
+        <p><span class="font-semibold">Skillset:</span> Full Stack (React/Next/Laravel), C#, ASP.NET, Python AI, Three.js, Graphic Design, MySQL, WordPress, SEO, MS Office</p>
+        <p><span class="font-semibold">Achievements:</span> 500K+ users influenced, AI-driven efficiency +32% in projects</p>
+      </div>
+      <div class="mt-8 text-center">
+        <button id="downloadAIResume" class="px-10 py-4 btn-ai-cyber rounded-full font-bold text-white shadow-xl tracking-wide">⬇ DOWNLOAD NEURAL RESUME (PDF)</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact with all facilities -->
+  <section id="contact" class="py-28 px-6 max-w-7xl mx-auto">
+    <div class="grid md:grid-cols-2 gap-10">
+      <div class="glass-card-pro p-8 fade-up-3d">
+        <h2 class="text-3xl font-bold">Quantum <span class="text-cyan-400">Contact</span></h2>
+        <p class="text-gray-400 mt-2">Initiate secure communication channel</p>
+        <div class="mt-8 space-y-5">
+          <div class="flex items-center gap-5 text-gray-200"><div class="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center text-xl">📞</div> +92 315 2665743</div>
+          <div class="flex items-center gap-5 text-gray-200"><div class="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center text-xl">✉️</div> maryamkh4240@gmail.com</div>
+          <div class="flex items-center gap-5 text-gray-200"><div class="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center text-xl">📍</div> Surjani Town, Karachi, Pakistan</div>
+          <div class="flex items-center gap-5 text-gray-200"><div class="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center text-xl">💼</div> linkedin.com/in/maryam-KHAN</div>
+        </div>
+        <div class="mt-8 flex gap-4">
+          <a href="mailto:maryamkh4240@gmail.com" class="flex-1 text-center py-3 bg-white/5 rounded-xl border border-white/20 hover:bg-cyan-600 transition">Email AI</a>
+          <a href="#" class="flex-1 text-center py-3 bg-white/5 rounded-xl border border-white/20 hover:bg-cyan-600 transition">Neural Chat</a>
+        </div>
+      </div>
+      <div class="glass-card-pro p-8 fade-up-3d">
+        <h2 class="text-3xl font-bold">Send <span class="text-cyan-400">HyperMessage</span></h2>
+        <form id="contactForm" class="mt-6 space-y-5">
+          <input name="name" id="cf-name" type="text" placeholder="Full Name" required class="w-full bg-black/50 border border-white/20 rounded-xl p-4 text-white focus:outline-none focus:border-cyan-500">
+          <input name="email" id="cf-email" type="email" placeholder="Email Address" required class="w-full bg-black/50 border border-white/20 rounded-xl p-4 text-white focus:border-cyan-500">
+          <textarea name="message" id="cf-message" rows="4" placeholder="Quantum project details..." required class="w-full bg-black/50 border border-white/20 rounded-xl p-4 text-white focus:border-cyan-500"></textarea>
+          <div>
+            <button type="submit" id="cf-submit" class="w-full py-4 btn-ai-cyber rounded-xl font-bold text-white">Send →</button>
+            <p id="cf-status" class="text-sm text-gray-300 mt-3 hidden"></p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-8 text-center text-gray-500 border-t border-white/10 text-sm backdrop-blur-sm">
+    © 2026 MARYAM KHAN — AI Full Stack Architect • Neural 3D Ecosystem
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const avatar = document.getElementById('heroAvatar');
+      if (!avatar) return;
+      const getCenter = () => {
+        const r = avatar.getBoundingClientRect();
+        return { cx: r.left + r.width / 2, cy: r.top + r.height / 2 };
+      };
+      let center = getCenter();
+      window.addEventListener('resize', () => center = getCenter());
+      document.addEventListener('mousemove', (e) => {
+        const x = (e.clientX - center.cx) / center.cx; // -1..1
+        const y = (e.clientY - center.cy) / center.cy;
+        const ry = x * 12; const rx = y * 8;
+        avatar.style.transform = `translateZ(0) rotateY(${ry}deg) rotateX(${ -rx }deg)`;
+      });
+      avatar.addEventListener('mouseleave', () => avatar.style.transform = '');
+    });
+    
+    // Contact form submission (client-side POST to Formspree)
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('contactForm');
+      if (!form) return;
+      const status = document.getElementById('cf-status');
+      const submitBtn = document.getElementById('cf-submit');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        submitBtn.disabled = true;
+        const oldText = submitBtn.textContent;
+        submitBtn.textContent = 'Sending...';
+        status.classList.add('hidden');
+
+        // === Setup: Replace the endpoint below with your Formspree endpoint ===
+        // 1) Go to https://formspree.io/ and create a free form to get an ID
+        // 2) Replace 'YOUR_FORM_ID' below with the ID they provide
+        const endpoint = 'https://formspree.io/f/YOUR_FORM_ID';
+
+        try {
+          const formData = new FormData(form);
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            body: formData,
+            headers: { 'Accept': 'application/json' }
+          });
+          if (res.ok) {
+            status.textContent = '✓ Transmission received. I will respond in 24h.';
+            status.classList.remove('hidden');
+            status.classList.remove('text-red-400');
+            status.classList.add('text-green-400');
+            form.reset();
+          } else {
+            const json = await res.json();
+            status.textContent = json?.error || 'Submission failed. Please try again later.';
+            status.classList.remove('hidden');
+            status.classList.remove('text-green-400');
+            status.classList.add('text-red-400');
+          }
+        } catch (err) {
+          status.textContent = 'Network error. Please try again later.';
+          status.classList.remove('hidden');
+          status.classList.remove('text-green-400');
+          status.classList.add('text-red-400');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = oldText;
+        }
+      });
+    });
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    
+    // --- ULTRA PRO LEVEL AI 3D MODEL: Neural Core with Rotating AI Brain + Floating Data Particles ---
+    const canvas = document.getElementById('ai-3d-canvas');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x010118);
+    scene.fog = new THREE.FogExp2(0x010118, 0.0035);
+    
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(4.5, 2.2, 12);
+    camera.lookAt(0, 0, 0);
+    
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: false, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    
+    // Advanced Cinematic Lighting
+    const ambient = new THREE.AmbientLight(0x111133);
+    scene.add(ambient);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.3);
+    keyLight.position.set(3, 5, 4);
+    scene.add(keyLight);
+    const fillLight = new THREE.PointLight(0x3366ff, 0.7);
+    fillLight.position.set(-2, 1.5, 5);
+    scene.add(fillLight);
+    const rimLight = new THREE.PointLight(0xff44cc, 0.5);
+    rimLight.position.set(2, 3, -7);
+    scene.add(rimLight);
+    const backGlow = new THREE.PointLight(0x00aaff, 0.4);
+    backGlow.position.set(0, 0, -5);
+    scene.add(backGlow);
+    
+    // MAIN AI CORE: Icosahedron with glowing ring network (Looks like advanced AI brain)
+    const aiGroup = new THREE.Group();
+    const coreGeo = new THREE.IcosahedronGeometry(1.4, 0);
+    const coreMat = new THREE.MeshStandardMaterial({ color: 0x00ccff, metalness: 0.85, roughness: 0.2, emissive: 0x0066aa, emissiveIntensity: 0.55 });
+    const aiCoreMesh = new THREE.Mesh(coreGeo, coreMat);
+    aiGroup.add(aiCoreMesh);
+    
+    // inner energy sphere
+    const innerEnergy = new THREE.Mesh(new THREE.SphereGeometry(0.8, 48, 48), new THREE.MeshStandardMaterial({ color: 0x88aaff, emissive: 0x2288ff, emissiveIntensity: 0.9, transparent: true, opacity: 0.7 }));
+    aiGroup.add(innerEnergy);
+    
+    // Orbiting AI data rings
+    const ringOrbit1 = new THREE.Mesh(new THREE.TorusGeometry(2.0, 0.08, 128, 400), new THREE.MeshStandardMaterial({ color: 0x33ccff, emissive: 0x0088aa, emissiveIntensity: 0.6 }));
+    const ringOrbit2 = new THREE.Mesh(new THREE.TorusGeometry(2.5, 0.06, 128, 500), new THREE.MeshStandardMaterial({ color: 0xff44aa, emissive: 0x551133 }));
+    aiGroup.add(ringOrbit1);
+    aiGroup.add(ringOrbit2);
+    
+    // Swarm of AI neurons (floating particles)
+    const neuronCount = 1800;
+    const neuronGeo = new THREE.BufferGeometry();
+    const neuronPositions = new Float32Array(neuronCount * 3);
+    for (let i = 0; i < neuronCount; i++) {
+      const radius = 2.8 + Math.random() * 1.2;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      neuronPositions[i*3] = radius * Math.sin(phi) * Math.cos(theta);
+      neuronPositions[i*3+1] = radius * Math.sin(phi) * Math.sin(theta);
+      neuronPositions[i*3+2] = radius * Math.cos(phi);
+    }
+    neuronGeo.setAttribute('position', new THREE.BufferAttribute(neuronPositions, 3));
+    const neuronMat = new THREE.PointsMaterial({ color: 0x66ffff, size: 0.055, transparent: true, blending: THREE.AdditiveBlending });
+    const neuronField = new THREE.Points(neuronGeo, neuronMat);
+    aiGroup.add(neuronField);
+    
+    scene.add(aiGroup);
+    
+    // Starfield background deep space
+    const starFieldGeo = new THREE.BufferGeometry();
+    const starFieldPos = new Float32Array(2500 * 3);
+    for (let i = 0; i < 2500; i++) {
+      starFieldPos[i*3] = (Math.random() - 0.5) * 300;
+      starFieldPos[i*3+1] = (Math.random() - 0.5) * 180;
+      starFieldPos[i*3+2] = (Math.random() - 0.5) * 120 - 60;
+    }
+    starFieldGeo.setAttribute('position', new THREE.BufferAttribute(starFieldPos, 3));
+    const starFieldPoints = new THREE.Points(starFieldGeo, new THREE.PointsMaterial({ color: 0xaaddff, size: 0.07 }));
+    scene.add(starFieldPoints);
+    
+    // Floating data stream particles (dynamic)
+    const dataStreamGeo = new THREE.BufferGeometry();
+    const streamCount = 1500;
+    const streamPosArray = new Float32Array(streamCount * 3);
+    for (let i=0; i<streamCount; i++) {
+      streamPosArray[i*3] = (Math.random() - 0.5) * 12;
+      streamPosArray[i*3+1] = (Math.random() - 0.5) * 8;
+      streamPosArray[i*3+2] = (Math.random() - 0.5) * 15 - 5;
+    }
+    dataStreamGeo.setAttribute('position', new THREE.BufferAttribute(streamPosArray, 3));
+    const streamParticleMat = new THREE.PointsMaterial({ color: 0x44aaff, size: 0.045, transparent: true });
+    const dataStreamPoints = new THREE.Points(dataStreamGeo, streamParticleMat);
+    scene.add(dataStreamPoints);
+    
+    let time = 0;
+    function animateAI() {
+      requestAnimationFrame(animateAI);
+      time += 0.007;
+      aiGroup.rotation.y = time * 0.28;
+      aiGroup.rotation.x = Math.sin(time * 0.18) * 0.12;
+      ringOrbit1.rotation.z = time * 0.5;
+      ringOrbit2.rotation.x = time * 0.4;
+      neuronField.rotation.y = time * 0.15;
+      dataStreamPoints.rotation.y = time * 0.08;
+      starFieldPoints.rotation.y = time * 0.01;
+      
+      // subtle camera orbit for pro effect
+      camera.position.x += (Math.sin(time * 0.1) * 0.2 - camera.position.x) * 0.02;
+      camera.lookAt(0, 0, 0);
+      renderer.render(scene, camera);
+    }
+    animateAI();
+    
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+    
+    // GSAP + ScrollTrigger for reveals
+    gsap.registerPlugin(ScrollTrigger);
+    document.querySelectorAll('.fade-up-3d').forEach(el => {
+      ScrollTrigger.create({
+        trigger: el,
+        start: 'top 85%',
+        onEnter: () => el.classList.add('visible'),
+        once: true
+      });
+    });
+    
+    // PDF Download logic
+    const downloadBtn = document.getElementById('downloadAIResume');
+    downloadBtn.addEventListener('click', () => {
+      const cvContent = `Maryam KHAN - Full Stack AI Architect\nContact: +92 315 2665743 | maryamkh4240@gmail.com\nEducation: Higher Diploma in Software Engineering (Aptech North Karachi)\nExperience: Assistant Manager, Call Center Rep, Documentation Assistant, HR Assistant\nSkills: React, Next.js, PHP/Laravel, C#, ASP.NET, Python AI, Three.js, Graphic Design, MySQL, WordPress\nProjects: Neural AI Commerce, 3D Metaverse, HR Intelligence Suite, AI SkinCare CRM\nAchievements: 500K+ users, AI efficiency +32%`;
+      const blob = new Blob([cvContent], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Maryam_KHAN_AI_Resume.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
